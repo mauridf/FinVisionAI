@@ -1,0 +1,110 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:livecharts="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             xmlns:behaviors="clr-namespace:FinVisionAI.UI.Behaviors"
+             x:Class="FinVisionAI.UI.Views.MainPage"
+             Title="FinVision AI">
+
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+
+            <!-- Entrada de dados -->
+            <Label Text="Quanto você deseja investir?" FontSize="18"/>
+            <Entry x:Name="amountEntry" Placeholder="Ex: 1000" Keyboard="Numeric">
+                <Entry.Behaviors>
+                    <behaviors:MoneyMaskBehavior />
+                </Entry.Behaviors>
+            </Entry>
+
+            <Label Text="Qual seu perfil de risco?" FontSize="18"/>
+            <Picker x:Name="riskPicker">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Conservador</x:String>
+                        <x:String>Moderado</x:String>
+                        <x:String>Agressivo</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Label Text="Escolha o período da projeção:" FontSize="18"/>
+            <Picker x:Name="periodPicker" SelectedIndex="0">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>12 meses</x:String>
+                        <x:String>24 meses</x:String>
+                        <x:String>36 meses</x:String>
+                        <x:String>48 meses</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Button Style="{StaticResource PrimaryButton}" 
+                    Text="Analisar" Clicked="OnAnalyzeClicked" 
+                    WidthRequest="120"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    HorizontalOptions="Center"
+                    Margin="0,20,0,0"/>
+
+            <CollectionView x:Name="resultsView" IsVisible="False">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Style="{StaticResource ModernCard}">
+                            <VerticalStackLayout Spacing="10">
+                                <!-- Linha superior com ícone e informações básicas -->
+                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
+                                    <!-- Ícone -->
+                                    <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
+                               Source="{Binding IconPath}"
+                               WidthRequest="40" HeightRequest="40"
+                               Margin="0,0,10,0"
+                               VerticalOptions="Center"/>
+
+                                    <!-- Tipo de Investimento -->
+                                    <Label Grid.Column="1" Grid.Row="0"
+                               Text="{Binding InvestmentType}" 
+                               FontAttributes="Bold" 
+                               FontSize="18"/>
+
+                                    <!-- Provedor -->
+                                    <Label Grid.Column="1" Grid.Row="1"
+                               Text="{Binding Provider}" 
+                               FontSize="14" 
+                               TextColor="Gray"/>
+                                </Grid>
+
+                                <!-- Retorno e Risco -->
+                                <Label Text="{Binding FormattedReturn}"
+                           FontSize="16"/>
+
+                                <Label Text="{Binding RiskLevel, StringFormat='Nível de risco: {0}/10'}"
+                           FontSize="14"/>
+
+                                <!-- Prós e Contras -->
+                                <Label Text="Prós:"
+                           FontAttributes="Bold"/>
+
+                                <Label Text="{Binding Pros}"
+                           FontSize="14"/>
+
+                                <Label Text="Contras:"
+                           FontAttributes="Bold"/>
+
+                                <Label Text="{Binding Cons}"
+                           FontSize="14"/>
+
+                                <!-- Gráfico - Agora abaixo de tudo -->
+                                <livecharts:CartesianChart HeightRequest="180"
+                                              HorizontalOptions="Fill"
+                                              Series="{Binding ChartSeries}"
+                                              Margin="0,20,0,0"/>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
